@@ -1,0 +1,24 @@
+# Data files — too large for GitHub
+data/ton_iot/
+data/cic_ids/
+data/processed/
+data/encoded/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+
+# Virtual environment
+snn_env/
+
+# Jupyter checkpoints
+.ipynb_checkpoints/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Model weights (large)
+models/*.npy
