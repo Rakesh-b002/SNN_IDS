@@ -24,7 +24,7 @@ class SpikeEncoder:
         Compute dynamic thresholds from training data.
         theta_i = mean of feature i across all training samples.
         """
-        self.thresholds = np.mean(X_train, axis=0)
+        self.thresholds = np.mean(X_train, axis=0) * 0.5  # 0.5x mean — handles skewed distributions
         self.n_features = X_train.shape[1]
         print(f"SpikeEncoder fitted:")
         print(f"  Features  : {self.n_features}")
