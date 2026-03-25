@@ -3,8 +3,6 @@
 Implementation of Event-Driven IDS using Spiking Neural Networks
 for Edge and IoT Security.
 
-Based on paper: ICSCSA-2025 (IEEE)
-Authors: [Your Name]
 
 ## Architecture
 - Input: 16 (TON_IoT) / 20 (CIC-IDS2018) neurons
