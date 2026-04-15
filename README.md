@@ -50,18 +50,15 @@ This project introduces:
 
 ## 2. Problem Statement
 
-How can we detect network intrusions efficiently on edge devices without sacrificing accuracy?
+Modern IoT deployments face a fundamental tension: security demands continuous, low-latency traffic inspection, while edge hardware imposes strict constraints on energy, memory, and compute. Conventional deep learning IDS models are accurate but energetically expensive, often requiring GPU-class hardware.
+Spiking Neural Networks address this by processing information through sparse, event-driven spike trains — closely mimicking biological neural computation. Key properties that make SNNs attractive for this problem:
 
-Challenges:
-- High-dimensional network traffic
-- Real-time processing requirements
-- Energy constraints in IoT devices
-- Temporal nature of attack patterns
+Event-driven computation → near-zero cost when no spikes are fired
+Ultra-low inference energy → sub-nanojoule-range on neuromorphic hardware
+Temporal encoding → naturally suited to time-series network traffic
+Bio-plausible learning → STDP enables unsupervised feature extraction without backpropagation
 
-Limitations of traditional methods:
-- Signature-based IDS cannot detect unknown attacks
-- Deep learning models are computationally expensive
-- Static models fail to capture temporal behavior
+The core research question is: Can a biologically-inspired SNN achieve competitive intrusion detection accuracy with energy consumption several orders of magnitude below conventional classifiers?
 
 ------------------------------------------------------------
 
@@ -97,15 +94,47 @@ Final Attack Prediction
 
 ------------------------------------------------------------
 
-## 5. Datasets
+## 5. 📊 Datasets
 
-Dataset         Samples     Features        Description
-------------------------------------------------------------
-TON_IoT         ~2.3M       44 → 16         IoT telemetry attacks
-CIC-IDS2018     ~3.1M       78 → 20         Enterprise network attacks
+Dataset         Samples     Features        Description                         Link
+----------------------------------------------------------------------------------------------
+TON_IoT         ~2.3M       44 → 16         IoT telemetry attack dataset        https://www.kaggle.com/datasets/dhoogla/csecicids2018
+CIC-IDS2018     ~3.1M       78 → 20         Enterprise network attack dataset   https://www.kaggle.com/datasets/dhoogla/nftoniotv2
 
-Classes:
-Normal | DoS | DDoS | Scan | Others
+----------------------------------------------------------------------------------------------
+
+## 📂 Dataset Structure
+
+After downloading, organize the datasets as follows:
+
+data/
+├── ton_iot/
+│   └── (TON_IoT CSV files)
+├── cic_ids/
+│   └── (CIC-IDS2018 CSV files)
+
+----------------------------------------------------------------------------------------------
+
+## 🔄 Dataset Processing
+
+Each dataset undergoes the following steps:
+
+- Removal of missing and duplicate values
+- Handling of Inf / -Inf values
+- Label mapping into 5 classes:
+  Normal | DoS | DDoS | Scan | Others
+- Feature selection (MI + RFE)
+- Normalization (MinMax scaling)
+
+----------------------------------------------------------------------------------------------
+
+## ⚠️ Notes
+
+- Ensure sufficient storage (~5–8 GB total for both datasets)
+- CIC-IDS2018 may require chunk processing due to large size
+- Verify dataset paths in:
+  src/preprocess.py
+  src/preprocess_cic.py
 
 ------------------------------------------------------------
 
@@ -234,26 +263,97 @@ src/
 
 ------------------------------------------------------------
 
-## 15. Setup & Usage
+## 15. 🚀 Setup & Usage
 
-Requirements:
-- Python 3.9+
-- 4 GB RAM
+### ⚙️ Requirements
 
-Installation:
+Component        Requirement
+----------------------------------------
+Python           3.9+ (3.10 recommended)
+RAM              4 GB minimum
+Libraries        brian2, numpy, pandas, scikit-learn, matplotlib
+Datasets         TON_IoT, CIC-IDS2018
 
+----------------------------------------
+
+## 📦 Installation
+
+# 1. Clone repository
+git clone <REPO_URL>
+cd <REPO_ROOT>
+
+# 2. Create virtual environment
 python -m venv snn_env
-source snn_env/bin/activate   (Linux/macOS)
-snn_env\Scripts\activate      (Windows)
 
-pip install brian2 numpy pandas scikit-learn matplotlib
+# 3. Activate environment
+# Windows
+snn_env\Scripts\activate
+# Linux / macOS
+source snn_env/bin/activate
 
-Run:
+# 4. Install dependencies
+pip install -r requirements.txt
 
+----------------------------------------
+
+## 📂 Dataset Setup
+
+Download datasets:
+- TON_IoT
+- CIC-IDS2018
+
+Place them in:
+
+data/
+├── ton_iot/
+├── cic_ids/
+
+Update dataset paths in:
+- src/preprocess.py
+- src/preprocess_cic.py
+
+----------------------------------------
+
+## ▶️ Quick Start
+
+# Step 1: Preprocess data
 python src/preprocess.py
 python src/preprocess_cic.py
+
+# Step 2: Validate spike encoding
+python src/test_encoder.py
+
+# Step 3: Train SNN (STDP)
 python src/train_stdp.py
+
+# Step 4: Evaluate model
 python src/evaluate.py
+
+
+----------------------------------------
+
+## 🧪 Output
+
+After running the pipeline, you will get:
+
+- Processed datasets
+- Spike-encoded data
+- Trained model weights (.npy)
+- Evaluation metrics:
+  Accuracy, F1 Score, Latency, Energy
+
+----------------------------------------
+
+## 🛠️ Troubleshooting
+
+No spikes generated:
+→ Check normalization and threshold values
+
+Low accuracy:
+→ Verify feature selection and encoding
+
+Slow execution:
+→ Reduce simulation window or dataset size
 
 ------------------------------------------------------------
 
