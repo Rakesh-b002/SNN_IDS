@@ -1,0 +1,42 @@
+{
+  "dataset": "ton",
+  "n_eval": 969,
+  "silent": 31,
+  "accuracy": 0.9845201238390093,
+  "f1_weighted": 0.9845134468420347,
+  "f1_macro": 0.9843443318120864,
+  "latency_mean_ms": 159.79208321271173,
+  "latency_std_ms": 65.8509554470493,
+  "energy_mean_nj": 1.3695046439628482,
+  "avg_spikes": 12.007223942208462,
+  "class_names": [
+    "DDoS",
+    "DoS",
+    "Normal",
+    "Others",
+    "Scan"
+  ],
+  "baselines": {
+    "SVM": {
+      "accuracy": 0.855,
+      "f1": 0.8535356602342716,
+      "latency_ms": 0.0974116325378418
+    },
+    "KNN": {
+      "accuracy": 0.966,
+      "f1": 0.9661360082025848,
+      "latency_ms": 0.016620516777038574
+    },
+    "RF": {
+      "accuracy": 0.9785,
+      "f1": 0.9785419071365409,
+      "latency_ms": 0.12190473079681396
+    }
+  },
+  "paper_targets": {
+    "accuracy": 0.965,
+    "f1": 0.94,
+    "latency_ms": 6.2,
+    "energy_mj": 3.9
+  }
+}
