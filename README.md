@@ -253,8 +253,6 @@ SNN (Ours)      → 77.0%
 ```
 ------------------------------------------------------------
 
-## 14. Code Architecture
-
 ## 14. 🗂️ Code Architecture
 ```bash
 snn_ids/
