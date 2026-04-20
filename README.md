@@ -85,7 +85,7 @@ System Flow:
 Raw Data → Preprocessing → Feature Selection → Normalization → Spike Encoding → SNN Processing → STDP Training → Classification → Evaluation
 
 ------------------------------------------------------------
-
+```bash
 Step   Stage                Description                                              Output
 ----------------------------------------------------------------------------------------------
 1      Data Collection      Load TON_IoT and CIC-IDS2018 datasets                   Raw network data
@@ -97,7 +97,7 @@ Step   Stage                Description                                         
 7      STDP Training        Update weights based on spike timing                    Trained SNN model
 8      Classification       Predict class using output neuron spikes                Predicted labels
 9      Evaluation           Compute metrics and generate results                    Metrics + results/
-
+```
 ------------------------------------------------------------
 
 ## 5. 📊 Datasets
@@ -112,13 +112,13 @@ CIC-IDS2018     ~3.1M       78 → 20         Enterprise network attack dataset 
 ## 📂 Dataset Structure
 
 After downloading, organize the datasets as follows:
-
+```bash
 data/
 ├── ton_iot/
 │   └── (TON_IoT CSV files)
 ├── cic_ids/
 │   └── (CIC-IDS2018 CSV files)
-
+```
 ----------------------------------------------------------------------------------------------
 
 ## 🔄 Dataset Processing
@@ -240,7 +240,7 @@ CIC-IDS2018:
 ------------------------------------------------------------
 
 ## 13. Comparison with Baselines
-
+```bash
 TON_IoT:
 SVM             → 85.5%
 KNN             → 96.6%
@@ -252,7 +252,7 @@ SVM             → 81.7%
 KNN             → 81.4%
 Random Forest   → 81.9%
 SNN (Ours)      → 77.0%
-
+```
 ------------------------------------------------------------
 
 ## 14. Code Architecture
@@ -299,22 +299,23 @@ snn_ids/
 ## 15. 🚀 Setup & Usage
 
 ### ⚙️ Requirements
-
+```bash
 Component        Requirement
 ----------------------------------------
 Python           3.9+ (3.10 recommended)
 RAM              4 GB minimum
 Libraries        brian2, numpy, pandas, scikit-learn, matplotlib
 Datasets         TON_IoT, CIC-IDS2018
-
+```
 ----------------------------------------
 
 ## 📦 Installation
 
 # 1. Clone repository
+```bash
 git clone <REPO_URL>
 cd <REPO_ROOT>
-
+```
 # 2. Create virtual environment
 python -m venv snn_env
 
@@ -336,11 +337,11 @@ Download datasets:
 - CIC-IDS2018
 
 Place them in:
-
+```bash
 data/
 ├── ton_iot/
 ├── cic_ids/
-
+```
 Update dataset paths in:
 - src/preprocess.py
 - src/preprocess_cic.py
@@ -438,7 +439,7 @@ Slow execution:
 
 ## 👥 Contributors
 
-Rakesh · Ujwal · Prajwal · Tarun  
+Rakesh · Ujwal · Prajwal · Tarun · Dhruva
 
 Department of Computer Science and Engineering (Cyber Security)  
 School of Engineering, Dayananda Sagar University  
