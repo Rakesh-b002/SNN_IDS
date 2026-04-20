@@ -76,8 +76,6 @@ The core research question is: Can a biologically-inspired SNN achieve competiti
 
 ------------------------------------------------------------
 
-## 4. End-to-End Workflow
-
 ## 4. 🔄 End-to-End Workflow
 
 System Flow:
@@ -101,18 +99,18 @@ Step   Stage                Description                                         
 ------------------------------------------------------------
 
 ## 5. 📊 Datasets
-
+```
 Dataset         Samples     Features        Description                         Link
 ----------------------------------------------------------------------------------------------
 TON_IoT         ~2.3M       44 → 16         IoT telemetry attack dataset        https://www.kaggle.com/datasets/dhoogla/csecicids2018
 CIC-IDS2018     ~3.1M       78 → 20         Enterprise network attack dataset   https://www.kaggle.com/datasets/dhoogla/nftoniotv2
-
+```
 ----------------------------------------------------------------------------------------------
 
 ## 📂 Dataset Structure
 
 After downloading, organize the datasets as follows:
-```bash
+```
 data/
 ├── ton_iot/
 │   └── (TON_IoT CSV files)
