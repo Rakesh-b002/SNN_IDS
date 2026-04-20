@@ -64,33 +64,39 @@ The core research question is: Can a biologically-inspired SNN achieve competiti
 
 ## 3. Proposed System Architecture
 
-Module               Function                             Output
-------------------------------------------------------------
-Data Processing      Clean + feature selection            Normalized features
-Spike Encoder        Convert features to spikes           Sparse spike trains
-SNN Model            Learn temporal patterns              Attack classification
+
+| Stage | Component | Description | Output |
+|------|----------|------------|--------|
+| 1 | Data Processing | Cleans data, handles missing values, performs feature selection and normalization | Structured feature vectors |
+| 2 | Spike Encoding (TTFS) | Converts features into spike timings based on magnitude | Sparse spike trains (~99% sparsity) |
+| 3 | SNN Model | Processes spike data using LIF neurons (Input → Hidden → Output) | Temporal spike activity |
+| 4 | STDP Learning | Updates synaptic weights based on spike timing relationships | Learned model parameters |
+| 5 | Classification | Determines class based on output neuron spike activity | Predicted attack class |
+| 6 | Evaluation | Computes accuracy, F1 score, latency, and energy; generates visual outputs | Metrics and result artifacts (`results/`) |
 
 ------------------------------------------------------------
 
 ## 4. End-to-End Workflow
 
-Raw Network Traffic
-        ↓
-Data Cleaning (NaN, Inf removal)
-        ↓
-Feature Selection (Top 16–20)
-        ↓
-Normalization (MinMax)
-        ↓
-Spike Encoding (TTFS)
-        ↓
-SNN Processing (LIF neurons)
-        ↓
-STDP Learning
-        ↓
-Spike Count Classification
-        ↓
-Final Attack Prediction
+## 4. 🔄 End-to-End Workflow
+
+System Flow:
+
+Raw Data → Preprocessing → Feature Selection → Normalization → Spike Encoding → SNN Processing → STDP Training → Classification → Evaluation
+
+------------------------------------------------------------
+
+Step   Stage                Description                                              Output
+----------------------------------------------------------------------------------------------
+1      Data Collection      Load TON_IoT and CIC-IDS2018 datasets                   Raw network data
+2      Preprocessing        Clean data, handle missing/inf values, map labels       Cleaned dataset
+3      Feature Selection    Select relevant features (MI + RFE)                     Reduced features
+4      Normalization        Scale features to uniform range                         Normalized data
+5      Spike Encoding       Convert features into spike timings (TTFS)              Sparse spike trains
+6      SNN Processing       Process spikes using LIF neurons                        Temporal spike activity
+7      STDP Training        Update weights based on spike timing                    Trained SNN model
+8      Classification       Predict class using output neuron spikes                Predicted labels
+9      Evaluation           Compute metrics and generate results                    Metrics + results/
 
 ------------------------------------------------------------
 
@@ -251,16 +257,43 @@ SNN (Ours)      → 77.0%
 
 ## 14. Code Architecture
 
-src/
-├── preprocess.py
-├── preprocess_cic.py
-├── spike_encoder.py
-├── snn_model.py
-├── train_stdp.py
-├── evaluate.py
-├── test_encoder.py
-├── test_snn.py
-
+## 14. 🗂️ Code Architecture
+```bash
+snn_ids/
+├── docs/                           # 📄 Documentation and notes
+│   └── deviations.md               # Project deviations from paper
+│
+├── results/                        # 📊 Outputs and evaluation results
+│   ├── accuracy_comparison.png
+│   ├── f1_comparison.png
+│   ├── latency_comparison.png
+│   ├── energy_proxy.png
+│   ├── confusion_matrices.png
+│   ├── confusion_ton.png
+│   ├── confusion_cic.png
+│   ├── per_class_f1.png
+│   ├── ton_results.json
+│   └── cic_results.json
+│
+├── sample_data/                    # 🧪 Small sample datasets for testing
+│   ├── ton_sample.npy
+│   ├── ton_labels.npy
+│   ├── cic_sample.npy
+│   └── cic_labels.npy
+│
+├── src/                            # 🧠 Core implementation
+│   ├── preprocess.py
+│   ├── preprocess_cic.py
+│   ├── spike_encoder.py
+│   ├── snn_model.py
+│   ├── train_stdp.py
+│   ├── evaluate.py
+│   ├── test_encoder.py
+│   └── test_snn.py
+│
+├── README.md
+└── .gitignore
+```
 ------------------------------------------------------------
 
 ## 15. 🚀 Setup & Usage
