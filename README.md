@@ -142,73 +142,141 @@ Each dataset undergoes the following steps:
 
 ------------------------------------------------------------
 
-## 6. Data Preprocessing
+## 🔹 SECTION 6 — Data Preprocessing
 
-Steps:
-- Remove missing values and duplicates
-- Replace Inf / -Inf values
-- Map labels to 5 classes
-- Feature selection using:
-  - Mutual Information (MI)
-  - Recursive Feature Elimination (RFE)
-- Normalize data:
+Before spike-based processing, raw network traffic data is cleaned and structured.
 
-x' = (x - min) / (max - min)
+Both datasets — TON_IoT and CIC-IDS2018 — undergo the following steps:
 
-------------------------------------------------------------
+- Data Cleaning
+  - Remove missing values and duplicates
+  - Handle infinite values and inconsistencies
 
-## 7. Spike Encoding (TTFS)
+- Label Mapping
+  - Map all attack types into 5 unified classes:
+    Normal / DoS / DDoS / Scan / Others
 
-Time-To-First-Spike method:
+- Feature Selection
+  - Use Mutual Information (MI) and Recursive Feature Elimination (RFE)
+  - Reduce features:
+    TON_IoT: 44 → 16
+    CIC-IDS2018: 78 → 20
 
-t_spike = feature_value × 100 ms
+- Normalization
+  - TON_IoT → log1p + MinMaxScaler
+  - CIC-IDS2018 → RobustScaler (handles outliers)
 
-Rules:
-- Spike only if value ≥ threshold
-- Threshold = mean of feature
+Output: Clean, normalized feature matrix ready for spike encoding.
+
+
+## ⚡ SECTION 7 — Spike Encoding (TTFS)
+
+SNNs operate on spikes instead of continuous values.
+
+We use Time-To-First-Spike (TTFS):
+
+t_spike = feature_value × 99 ms
+
+- Higher values → earlier spikes
+- Lower values → later spikes
+
+Encoding rules:
+- Spike only if:
+  feature_value ≥ 0.5 × mean(feature)
+- Else → no spike
+
+Properties:
+- Single spike per feature
+- Time window = 100 ms
 - Refractory period = 5 ms
 
-Sparsity:
-- TON_IoT → 99.9%
-- CIC → 99.7%
+Result:
+- TON_IoT sparsity = 99.9%
+- CIC sparsity = 99.7%
 
-------------------------------------------------------------
+This sparsity directly enables energy efficiency.
 
-## 8. SNN Model Architecture
 
-Layer       Neurons     Description
---------------------------------------
-Input       16–20       Spike inputs
-Hidden      40          LIF neurons
-Output      5           Class neurons
+## 🧠 SECTION 8 — SNN Model Architecture
 
-LIF Equation:
-τ dV/dt = -V + Σ(w × spikes)
+Three-layer architecture:
 
-------------------------------------------------------------
+Input Layer
+- 16–20 neurons (one per feature)
+- Passes spike timings
 
-## 9. Learning Mechanism (STDP)
+Hidden Layer (40 LIF neurons)
 
-Δw = A+ e^(-Δt/τ+)   if pre before post
-Δw = -A- e^(Δt/τ-)  if post before pre
+Neuron model:
+τ · dV/dt = -V + Σ(w × spikes)
 
-- Strengthens useful connections
-- Weakens irrelevant ones
-- Learns temporal relationships
+Parameters:
+- τ = 10 ms
+- Threshold = 1.0
+- Reset = 0
+- Refractory = 5 ms
 
-------------------------------------------------------------
+Key mechanisms:
+- Competitive Inhibition → first neuron suppresses others
+- Homeostatic Adaptation → balances neuron activity
 
-## 10. Training Process
+Output Layer
+- 5 neurons:
+  Normal / DoS / DDoS / Scan / Others
+- Final prediction = highest spike activity
 
-- Unsupervised learning
-- 30 epochs
-- 100 ms simulation window per sample
+Hybrid Extension:
+- Extract 96-dimensional spike feature vector
+- Pass to Random Forest for classification
 
-Steps:
-1. Encode spikes
-2. Run simulation
-3. Capture spike activity
-4. Update weights using STDP
+
+## 🔁 SECTION 9 — Learning Mechanism (STDP)
+
+STDP is used for unsupervised learning.
+
+Weight update:
+
+Δw = A+ · exp(-Δt / τ+)    if Δt > 0
+Δw = -A- · exp(Δt / τ-)    if Δt < 0
+
+Where:
+- Δt = t_post − t_pre
+- A± = 0.01
+- τ± = 20 ms
+
+Interpretation:
+- Pre before post → strengthen connection
+- Pre after post → weaken connection
+
+Key advantages:
+- No backpropagation
+- Local learning rule
+- Captures temporal causality
+
+Different attacks produce distinct spike timing patterns, which are learned automatically.
+
+
+## 🚀 SECTION 10 — Training Process
+
+Training is performed over 30 epochs.
+
+For each sample:
+1. Encode features into spike trains
+2. Run 100 ms SNN simulation (Brian2)
+3. Update weights using STDP
+4. Apply homeostatic adjustments
+5. Move to next sample
+
+After training:
+- Extract spike-based features from hidden layer
+- Train Random Forest using labels (supervised step)
+
+Final model artifacts:
+- W_ih_trained.npy   → Input-to-hidden weights
+- W_ho_trained.npy   → Hidden-to-output weights
+- readout_rich.pkl   → Random Forest classifier
+
+The system is now ready for inference.
 
 ------------------------------------------------------------
 
